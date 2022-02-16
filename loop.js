@@ -28,6 +28,7 @@ async function w3cgroups() {
   if (!groups) {
     groups = [];
     for await (const group of w3c.listGroups()) {
+      group.identifier = group._links.self.href.replace('https://api.w3.org/groups/','');
       groups.push(group);
     }
   }
