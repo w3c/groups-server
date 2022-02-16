@@ -160,8 +160,7 @@ async function cycle() {
 export
 function nudge() {
   cycle.catch(err => {
-    console.log(err);
-    monitor.error(`refresh loop crashed - ${err}`);
+    monitor.error("refresh loop crashed", err);
   });
 }
 
@@ -200,13 +199,11 @@ function init() {
         settings.owners = new_owners;
       }
      }).catch(err => {
-      console.log(err);
-      monitor.error(`invalid settings.json - ${err}`);
+      monitor.error("invalid settings.json", err);
      }).then(cycle).then(() => {
        setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
      }).catch(err => {
-       console.log(err);
-       monitor.error(`refresh loop crashed - ${err}`);
+       monitor.error("refresh loop crashed", err);
      });
   }
   loop();
