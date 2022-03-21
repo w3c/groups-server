@@ -105,7 +105,11 @@ async function cycle() {
   publish.saveData("identifiers.json", identifiers);
 
   function isKnown(id) {
-    return groups.filter(g => g.id === id).length > 0;
+    if (typeof id === "number") {
+      return groups.filter(g => g.id === id).length > 0;
+    } else {
+      return groups.filter(g => g.identifier === id).length > 0;
+    }
   }
 
   const group_repos = [];
@@ -129,16 +133,16 @@ async function cycle() {
     monitor.error("No group repositories found");
   }
 
-  function getRepos(id) {
-    return allrepos.filter(r => r.w3cjson && r.w3cjson.group && r.w3cjson.group.includes(id));
+  function getRepos(id, identifier) {
+    return allrepos.filter(r => r.w3cjson && r.w3cjson.group && (r.w3cjson.group.includes(id) || r.w3cjson.group.includes(identifier)));
   }
   const subgroups = {};
   for (const group of groups) {
-    const repos = getRepos(group.id);
+    const repos = getRepos(group.id, group.identifier);
     let others = [];
     const other_ids = groups.filter(g => g.members && g.members.filter(m => m.id === group.id).length > 0);
     for (const other of other_ids) {
-      others = others.concat(getRepos(other.id));
+      others = others.concat(getRepos(other.id, other.identifier));
     }
     const category = group.identifier.split('/')[0];
     if (!subgroups[category]) subgroups[category] = [];
@@ -204,7 +208,7 @@ function init() {
      }).then(cycle).then(() => {
        setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
      }).catch(err => {
-       monitor.error("refresh loop crashed", err);
+       monitor.error("refresh loop crashed - no more cycles", err);
      });
   }
   loop();
