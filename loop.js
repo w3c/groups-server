@@ -117,10 +117,20 @@ async function cycle() {
     if (repo.w3cjson && repo.w3cjson.group) {
       let found = false;
       for (let index = 0; index < repo.w3cjson.group.length; index++) {
-         if (isKnown(repo.w3cjson.group[index])) {
-           found = true;
-           break;
-         };
+        const cid = repo.w3cjson.group[index];
+        if (typeof cid === "number") {
+          const sg = groups.find(g => g.id === cid);
+          if (sg) {
+            found = true;
+            // replace the ID with the group shortname
+            repo.w3cjson.group[index] = sg.identifier;
+          }
+        } else {
+          const sg = groups.find(g => g.identifier === cid);
+          if (sg) {
+            found = true;
+          }
+        }
       }
       if (found) {
         group_repos.push(repo);
