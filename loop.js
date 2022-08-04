@@ -215,10 +215,10 @@ function init() {
       }
      }).catch(err => {
       monitor.error("invalid settings.json", err);
-     }).then(cycle).then(() => {
-       setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
-     }).catch(err => {
-       monitor.error("refresh loop crashed - no more cycles", err);
+    }).then(cycle).catch(err => {
+       monitor.error("refresh loop crashed", err);
+     }).then(() => {
+        setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
      });
   }
   loop();
