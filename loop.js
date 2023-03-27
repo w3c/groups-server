@@ -220,7 +220,7 @@ function init() {
     }).then(cycle).catch(err => {
        monitor.error("refresh loop crashed", err);
      }).then(() => {
-        setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
+        if (doCycle)  setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
      });
   }
   loop();
