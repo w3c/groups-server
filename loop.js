@@ -56,26 +56,28 @@ async function repositories() {
     for (const owner of settings.owners) {
       if (config.debug) monitor.log(`loading repositories for owner ${owner.login}`)
       for await (const repo of github.listRepos(owner.login)) {
-        if (!repo.isPrivate) { // do not save information about private repos
-          delete repo.isPrivate; // all are public
-          if (config.debug) monitor.log(`found ${repo.owner.login}/${repo.name}`)
-          if (repo.w3cjson && repo.w3cjson.text) {
-            repo.w3cjson = sanitizeW3CJSON(repo.w3cjson.text);
-            if (!repo.w3cjson) {
-              delete repo.w3cjson;
-            }
-          } else {
-            if (owner.group.length) {
-              if (!repo.w3cjson) repo.w3cjson = {};
-              repo.w3cjson.group = owner.group;
-            }
+        if (config.debug) monitor.log(`found ${repo.owner.login}/${repo.name}`)
+        if (repo.w3cjson && repo.w3cjson.text) {
+          repo.w3cjson = sanitizeW3CJSON(repo.w3cjson.text);
+          if (!repo.w3cjson) {
+            delete repo.w3cjson;
           }
-          if (repo.homepageUrl === null) {
-            delete repo.homepageUrl;
+        } else {
+          if (owner.group.length) {
+            if (!repo.w3cjson) repo.w3cjson = {};
+            repo.w3cjson.group = owner.group;
           }
-          if (repo.description === null) {
-            delete repo.description;
-          }
+        }
+        if (repo.homepageUrl === null) {
+          delete repo.homepageUrl;
+        }
+        if (repo.description === null) {
+          delete repo.description;
+        }
+        if ((repo.isPrivate === false
+             && repo.w3cjson && repo.w3cjson.exposed !== false)
+         || (repo.isPrivate === true
+              && repo.w3cjson && repo.w3cjson.exposed === true)) {
           repos.push(repo);
         }
       }
