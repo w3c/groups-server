@@ -35,6 +35,31 @@ async function w3cgroups() {
   return groups.sort(compare);
 }
 
+/**
+ * Should we expose a repository or not?
+ *
+ * @param {String} repo
+ * @returns {boolean} true if the repository should kept, false otherwise
+ */
+function keepRepository(repo) {
+  return (
+    // public repositories
+    // keep those that have no json or json.exposed is not false
+    (repo.isPrivate === false
+      && (!repo.json
+          || (repo.w3cjson && repo.w3cjson.exposed !== false)))
+    // private repositories
+    // keep those where json.exposed is true
+    || (repo.isPrivate === true
+      && repo.w3cjson && repo.w3cjson.exposed === true)
+  );
+}
+
+/**
+ * get all of the repositories for all of the GH organizations
+ *
+ * @returns {Array} contains a sorted list of repositories
+ */
 async function repositories() {
   let repos;
   function compare(r1, r2) {
@@ -74,10 +99,7 @@ async function repositories() {
         if (repo.description === null) {
           delete repo.description;
         }
-        if ((repo.isPrivate === false
-             && repo.w3cjson && repo.w3cjson.exposed !== false)
-         || (repo.isPrivate === true
-              && repo.w3cjson && repo.w3cjson.exposed === true)) {
+        if (keepRepository(repo)) {
           repos.push(repo);
         }
       }
@@ -92,6 +114,9 @@ let settings = {
   owners:  [ { "login": "w3c", "group": [] } ]
 };
 
+/**
+ * This refreshes the list of groups, repositories and publish everything
+ */
 async function cycle() {
   monitor.log("Starting a cycle");
   const start = new Date().toISOString();
