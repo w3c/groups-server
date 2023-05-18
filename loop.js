@@ -201,7 +201,7 @@ async function cycle() {
  */
 export
 function nudge() {
-  cycle.catch(err => {
+  cycle().catch(err => {
     monitor.error("refresh loop crashed", err);
   });
 }
