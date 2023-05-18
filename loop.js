@@ -46,7 +46,7 @@ function keepRepository(repo) {
     // public repositories
     // keep those that have no json or json.exposed is not false
     (repo.isPrivate === false
-      && (!repo.json
+      && (!repo.w3cjson
           || (repo.w3cjson && repo.w3cjson.exposed !== false)))
     // private repositories
     // keep those where json.exposed is true
