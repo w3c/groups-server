@@ -141,7 +141,7 @@ async function cycle() {
       if (sg) return sg.identifier;
     }
     const group = w3c.group(cid);
-    if (group) {
+    if (group && group._links &&  group._links.self) {
       // this is likely to be a closed group, not return by the W3C API by default :(
       group.identifier = group._links.self.href.replace('https://api.w3.org/groups/','')
       groups.push(group);
