@@ -8,7 +8,7 @@ import { sanitizeW3CJSON } from "./lib/utils.js";
 
 /**
  * Get the groups from the W3C API, sort them based on names
- * Save the mapping between id and [category]/shortname
+ *
  * @returns {Array} the Groups
  */
 async function w3cgroups() {
@@ -129,6 +129,7 @@ async function cycle() {
 
   publish.saveData("all-repositories.json", allrepos);
   const identifiers = groups.map(g => { return {"id":g.id,"identifier":g.identifier};});
+  // Save the mapping between id and [category]/shortname , for convenience
   publish.saveData("identifiers.json", identifiers);
 
   function isKnown(id) {
