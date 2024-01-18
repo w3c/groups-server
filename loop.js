@@ -129,23 +129,36 @@ async function cycle() {
 
   publish.saveData("all-repositories.json", allrepos);
   const identifiers = groups.map(g => { return {"id":g.id,"identifier":g.identifier};});
-  // Save the mapping between id and [category]/shortname , for convenience
-  publish.saveData("identifiers.json", identifiers);
 
   const group_repos = [];
+
+  async function findGroup(cid) {
+    if (typeof cid === "number") {
+      const sg = groups.find(g => g.id === cid);
+      if (sg) return sg.identifier;
+    } else {
+      const sg = groups.find(g => g.identifier === cid);
+      if (sg) return sg.identifier;
+    }
+    const group = w3c.group(cid);
+    if (group) {
+      // this is likely to be a closed group, not return by the W3C API by default :(
+      group.identifier = group._links.self.href.replace('https://api.w3.org/groups/','')
+      groups.push(group);
+      identifiers.push({"id":group.id,"identifier":group.identifier});
+      return group.identifier;
+    }
+    return undefined;
+  }
+
   for (const repo of allrepos) {
     if (repo.w3cjson && repo.w3cjson.group) {
       let found = false;
       let newgroup = [];
       for (let index = 0; index < repo.w3cjson.group.length; index++) {
         const cid = repo.w3cjson.group[index];
-        if (typeof cid === "number") {
-          const sg = groups.find(g => g.id === cid);
-          if (sg) newgroup.push(sg.identifier);
-        } else {
-          const sg = groups.find(g => g.identifier === cid);
-          if (sg) newgroup.push(sg.identifier);
-        }
+        const group = findGroup(cid);
+        if (group) newgroup.push(group);
       }
       repo.w3cjson.group = newgroup;
       if (repo.w3cjson.group.length > 0) {
@@ -153,6 +166,10 @@ async function cycle() {
       }
     }
   }
+
+  // Save the mapping between id and [category]/shortname , for convenience
+  publish.saveData("identifiers.json", identifiers);
+
   if (group_repos.length > 0) {
     publish.saveData("repositories.json", group_repos);
   } else {
