@@ -136,7 +136,7 @@ async function cycle() {
     if (typeof cid === "number") {
       const sg = groups.find(g => g.id === cid);
       if (sg) return sg.identifier;
-    } else {
+    } else if (typeof cid === "string") {
       const sg = groups.find(g => g.identifier === cid);
       if (sg) return sg.identifier;
     }
