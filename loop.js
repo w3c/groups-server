@@ -132,21 +132,32 @@ async function cycle() {
 
   const group_repos = [];
 
+  const other_groups = {}; // this is a cache of responses from w3c.group
   async function findGroup(cid) {
+    let group = undefined;
     if (typeof cid === "number") {
       const sg = groups.find(g => g.id === cid);
       if (sg) return sg.identifier;
     } else if (typeof cid === "string") {
       const sg = groups.find(g => g.identifier === cid);
       if (sg) return sg.identifier;
-    }
-    const group = w3c.group(cid);
-    if (group && group._links &&  group._links.self) {
-      // this is likely to be a closed group, not return by the W3C API by default :(
-      group.identifier = group._links.self.href.replace('https://api.w3.org/groups/','')
-      groups.push(group);
-      identifiers.push({"id":group.id,"identifier":group.identifier});
-      return group.identifier;
+    } else if (other_groups[cid]) { // did we fetch the group already?
+      group = other_groups[cid];
+      if (group.identifier) {  // filter out group === "invalid"
+        return group.identifier;
+      }
+    } else {
+      group = await w3c.group(cid);
+      if (group) {
+        // this is likely to be a closed group, not return by the W3C API by default :(
+        group.identifier = group._links.self.href.replace('https://api.w3.org/groups/','')
+        groups.push(group);
+        other_groups[cid] = group;
+        identifiers.push({"id":group.id,"identifier":group.identifier});
+        return group.identifier;
+      } else {
+        other_groups[cid] = "invalid";
+      }
     }
     return undefined;
   }
@@ -157,8 +168,10 @@ async function cycle() {
       let newgroup = [];
       for (let index = 0; index < repo.w3cjson.group.length; index++) {
         const cid = repo.w3cjson.group[index];
-        const group = findGroup(cid);
-        if (group) newgroup.push(group);
+        const group = await findGroup(cid);
+        if (group) {
+          newgroup.push(group);
+        }
       }
       repo.w3cjson.group = newgroup;
       if (repo.w3cjson.group.length > 0) {
