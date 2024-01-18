@@ -132,35 +132,23 @@ async function cycle() {
   // Save the mapping between id and [category]/shortname , for convenience
   publish.saveData("identifiers.json", identifiers);
 
-  function isKnown(id) {
-    if (typeof id === "number") {
-      return groups.filter(g => g.id === id).length > 0;
-    } else {
-      return groups.filter(g => g.identifier === id).length > 0;
-    }
-  }
-
   const group_repos = [];
   for (const repo of allrepos) {
     if (repo.w3cjson && repo.w3cjson.group) {
       let found = false;
+      let newgroup = [];
       for (let index = 0; index < repo.w3cjson.group.length; index++) {
         const cid = repo.w3cjson.group[index];
         if (typeof cid === "number") {
           const sg = groups.find(g => g.id === cid);
-          if (sg) {
-            found = true;
-            // replace the ID with the group shortname
-            repo.w3cjson.group[index] = sg.identifier;
-          }
+          if (sg) newgroup.push(sg.identifier);
         } else {
           const sg = groups.find(g => g.identifier === cid);
-          if (sg) {
-            found = true;
-          }
+          if (sg) newgroup.push(sg.identifier);
         }
       }
-      if (found) {
+      repo.w3cjson.group = newgroup;
+      if (repo.w3cjson.group.length > 0) {
         group_repos.push(repo);
       }
     }
