@@ -141,7 +141,9 @@ async function cycle() {
     } else if (typeof cid === "string") {
       const sg = groups.find(g => g.identifier === cid);
       if (sg) return sg.identifier;
-    } else if (other_groups[cid]) { // did we fetch the group already?
+    }
+    // this isn't an open group or a closed group we saw previously
+    if (other_groups[cid]) { // did we fetch the group already?
       group = other_groups[cid];
       if (group.identifier) {  // filter out group === "invalid"
         return group.identifier;
