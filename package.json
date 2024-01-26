@@ -26,10 +26,10 @@
   },
   "homepage": "https://github.com/w3c/groups#readme",
   "dependencies": {
-    "@octokit/core": "^3.5.1",
-    "@octokit/plugin-throttling": "^3.5.2",
-    "body-parser": "^1.19.1",
-    "express": "^4.17.2",
-    "nodemailer": "^6.7.2"
+    "@octokit/core": "3.*.*",
+    "@octokit/plugin-throttling": "3.*.*",
+    "body-parser": "1.*.*",
+    "express": "4.*.*",
+    "nodemailer": "6.*.*"
   }
 }
