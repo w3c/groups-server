@@ -6,6 +6,20 @@ import config from "./lib/config.js";
 import fetch from 'node-fetch';
 import { sanitizeW3CJSON } from "./lib/utils.js";
 
+async function services(group) {
+  const services = [];
+  for await (const service of w3c.listServices(group.identifier)) {
+    services.push(service);
+  }
+  for (const service of services.filter(s => s.title === "Version Control")) {
+    const s = await fetch(service.href).then(r => r.json()).catch(err => undefined);
+    if (s) {
+      service.details = s;
+    }
+  }
+  return services;
+}
+
 /**
  * Get the groups from the W3C API, sort them based on names
  *
@@ -21,9 +35,6 @@ async function w3cgroups() {
       return 1;
     }
     return 0;
-  }
-  if (config.debug) {
-    groups = await publish.getData("w3c-groups.json");
   }
   if (!groups) {
     groups = [];
@@ -73,45 +84,93 @@ async function repositories() {
     }
     return 0;
   }
+  function defaultGroups(repo) {
+    const login = repo.owner.login;
+    const name = repo.name;
+    let groups = [];
+    // first, do we have one or more groups claiming this particular repository
+    for (const claim of settings.owners.filter(c => c.group && c.group.length > 0)) {
+      if ((claim.login && claim.login.toLowerCase() === login.toLowerCase())
+        && (claim.name && claim.name.toLowerCase() === name.toLowerCase())) {
+          groups = groups.concat(claim.group);
+      }
+    }
+
+    if (groups.length === 0) { // no group claimed this particular repo yet
+      // second, do we have one or more groups claiming this particular GH org
+      for (const claim of settings.owners.filter(c => c.group)) {
+        if ((claim.login && claim.login.toLowerCase() === login.toLowerCase())
+          && !claim.name) {
+            groups = groups.concat(claim.group);
+        }
+      }
+    }
+    return groups;
+  }
+  function addRepository(repo) {
+    if (repo.w3cjson && repo.w3cjson.text) {
+      repo.w3cjson = sanitizeW3CJSON(repo.w3cjson.text);
+      if (!repo.w3cjson) {
+        delete repo.w3cjson;
+      }
+    } else {
+      const groups = defaultGroups(repo);
+      if (groups.length) {
+        if (!repo.w3cjson) repo.w3cjson = {};
+        repo.w3cjson.group = groups;
+      }
+    }
+    if (repo.homepageUrl === null) {
+      delete repo.homepageUrl;
+    }
+    if (repo.description === null) {
+      delete repo.description;
+    }
+    if (keepRepository(repo)) {
+      repos.push(repo);
+    }
+  }
   if (config.debug) {
     repos = await publish.getData("all-repositories.json");
   }
   if (!repos) {
     repos = [];
+
+    const owners = new Set();
     for (const owner of settings.owners) {
-      if (config.debug) monitor.log(`loading repositories for owner ${owner.login}`)
-      for await (const repo of github.listRepos(owner.login)) {
-        if (config.debug) monitor.log(`found ${repo.owner.login}/${repo.name}`)
-        if (repo.w3cjson && repo.w3cjson.text) {
-          repo.w3cjson = sanitizeW3CJSON(repo.w3cjson.text);
-          if (!repo.w3cjson) {
-            delete repo.w3cjson;
-          }
-        } else {
-          if (owner.group.length) {
-            if (!repo.w3cjson) repo.w3cjson = {};
-            repo.w3cjson.group = owner.group;
-          }
-        }
-        if (repo.homepageUrl === null) {
-          delete repo.homepageUrl;
-        }
-        if (repo.description === null) {
-          delete repo.description;
-        }
-        if (keepRepository(repo)) {
-          repos.push(repo);
-        }
+      if (!owner.name) { // eliminate the single repo claim
+        // making GitHub owner unique
+        owners.add(owner.login.toLowerCase());
       }
     }
+    for (const owner of owners) {
+      if (config.debug) monitor.log(`loading repositories for owner ${owner}`)
+      for await (const repo of github.listRepos(owner)) {
+        if (config.debug) monitor.log(`found ${repo.owner.login}/${repo.name}`)
+        addRepository(repo);
+      }
+    }
+    const crepos = new Set();
+    // then load for individual repos unless we already loaded the org
+    for (const owner of settings.owners) {
+      if (owner.name && !owners.has(owner.login.toLowerCase())) { // eliminate the org claim
+        // making GitHub repo unique
+        crepos.add(`${owner.login.toLowerCase()}/${owner.name.toLowerCase()}`);
+      }
+    }
+    for (const repo of crepos) {
+      if (config.debug) monitor.log(`loading repository ${repo}`)
+      addRepository(await github.getRepo(repo));
+    }
+
   }
   return repos.sort(compare);
 }
 
 // updated in init()
 let settings = {
-  refreshCycle: 3,
-  owners:  [ { "login": "w3c", "group": [] } ]
+  refreshCycle: 3
+  , owners: [ { "login": "w3c", "group": [] } ]
 };
 
 /**
@@ -120,12 +179,61 @@ let settings = {
 async function cycle() {
   monitor.log("Starting a cycle");
   const start = new Date().toISOString();
-  const groups = await w3cgroups();
-  monitor.log(`loaded ${groups.length} groups`)
+  let groups;
+  // const groups = [{"identifier": "cg/wicg"}];
+
+  if (config.debug) {
+    groups = await publish.getData("w3c-groups.json");  
+  }
+  if (!groups) {
+    groups = await w3cgroups();
+    
+    for (const group of groups) {
+      group.services = await services(group);
+    }
+  }
+
+  // const groups = [{"identifier": "cg/wicg"}];
+  monitor.log(`loaded ${groups.length} groups`);
+
+  // this forces to load the repositories of W3C without making claims of group ownership
+  for (const group of groups) {
+    if (group.services) {
+      const services = group.services.filter(s => s.details
+        && s.details.type === "repository"
+      );
+      if (services.length > 0) {
+        for (const service of services) {
+          const match = service.details.link.match("https://github.com/([^/]+)/?([^/]+)?/?")
+          if (!match) {
+            // console.log(`${group.identifier} Ignore ${service.details.link}`);
+          } else if (match[1] && !match[2]) {
+            if (match[1].toLowerCase() != 'w3c') {
+              settings.owners.push({
+                "login": match[1],
+                "group": [ group.identifier ]
+              });
+            } else {
+              monitor.error(`${group.identifier} is attempting to claiming the entire W3C GitHub. Ignore`)
+            }
+          } else if (match[1] && match[2]) {
+            settings.owners.push({
+              "login": match[1],
+              "name": match[2],
+              "group": [ group.identifier ]
+            });
+          } else { // ignore
+            // console.log(`${group.identifier} Ignore ${service.details.link}`);
+          } 
+        }
+      }
+    }
+  }
+
+  publish.saveData("w3c-groups.json", groups);
+
   const allrepos = await repositories();
   monitor.log(`loaded ${allrepos.length} repositories`)
-
-  // publish.saveData("w3c-groups.json", groups);
 
   publish.saveData("all-repositories.json", allrepos);
   const identifiers = groups.map(g => { return {"id":g.id,"identifier":g.identifier};});
@@ -186,6 +294,7 @@ async function cycle() {
   publish.saveData("identifiers.json", identifiers);
 
   if (group_repos.length > 0) {
+    monitor.log(`Found ${group_repos.length} repositories associated with groups`);
     publish.saveData("repositories.json", group_repos);
   } else {
     monitor.error("No group repositories found");
