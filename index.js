@@ -6,7 +6,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import fs from 'fs/promises';
 // import ghHandler from require("./lib/GHEventHandler.js");
-import { nudge, init } from "./loop.js";
+import { nudge, serve, init } from "./loop.js";
 
 import path from 'path';
 
@@ -64,6 +64,21 @@ app.post("/nudge", function (req, res, next) {
   }
   next();
   return;
+});
+
+app.get("/data/groups", function (req, res, next) {
+  serve(req, res, next)
+  .catch((err) => {
+    console.log(err)
+    res.status(500).send("contact Starman. He is orbiting somewhere in space in his car.")
+  })
+  .then(() => next());
+});
+
+app.get("/data/repositories", function (req, res, next) {
+  serve(req, res, next)
+  .catch(() => res.status(500).send("contact Starman. He is orbiting somewhere in space in his car."))
+  .then(() => next());
 });
 
 app.get("/doc", function (req, res, next) {
