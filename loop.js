@@ -336,6 +336,24 @@ function nudge() {
   });
 }
 
+/**
+ * Serve data
+ */
+export
+async function serve(request, response, next) {
+  if (request.url.endsWith('repositories')) {
+    return publish.getData("repositories.json").then((data) => {
+      response.json(data);
+    });
+  } else if (request.url.endsWith('groups')) {
+    return publish.getData("w3c-groups.json").then((data) => {
+      response.json(data);
+    });
+  } else {
+    response.json({status: `unknown ${url}`})
+  }
+}
+
 
 export
 function init() {
