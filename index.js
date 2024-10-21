@@ -1,11 +1,12 @@
 "use strict";
 
+// Measure the time spent to load the service
 const t0 = Date.now();
 
 import express from "express";
 import bodyParser from "body-parser";
 import fs from 'fs/promises';
-// import ghHandler from require("./lib/GHEventHandler.js");
+// import ghHandler from require("./lib/GHEventHandler.js"); @@UNUSED
 import { nudge, serve, init } from "./loop.js";
 
 import path from 'path';
@@ -22,6 +23,11 @@ app.use(bodyParser.json());
 monitor.setName("Group data dumper");
 monitor.install(app);
 
+/**
+ * Check if a payload comes from GH
+ * @param {object} req - an HTTP Request object
+ * @returns {boolean} true if the request comes from GitHub
+ */
 function fromGitHub(req) {
   let ghEvent = req.get("X-GitHub-Event");
   let header = req.get("X-Hub-Signature");
@@ -32,6 +38,10 @@ function fromGitHub(req) {
           && ghEvent !== undefined;
 }
 
+/**
+ * Process a payload sent by GitHub (UNUSED)
+ * @returns {void}
+ */
 app.post("/payload", function (req, res, next) {
   if (!fromGitHub(req)) {
     monitor.warn("POST isn't from GitHub");
@@ -54,6 +64,10 @@ app.post("/payload", function (req, res, next) {
   return;
 });
 
+/**
+ * Nudge the service
+ * @returns {void}
+ */
 app.post("/nudge", function (req, res, next) {
   try {
     nudge();
@@ -66,6 +80,10 @@ app.post("/nudge", function (req, res, next) {
   return;
 });
 
+/**
+ * Get groups data (UNUSED)
+ * @returns {void}
+ */
 app.get("/data/groups", function (req, res, next) {
   serve(req, res, next)
   .catch((err) => {
@@ -81,6 +99,10 @@ app.get("/data/repositories", function (req, res, next) {
   .then(() => next());
 });
 
+/**
+ * Get index.html documentation
+ * @returns {void}
+ */
 app.get("/doc", function (req, res, next) {
   fs.readFile(path.resolve(config.basedir, "./docs/index.html")).then(data => {
     res.set('Content-Type', 'text/html')
@@ -91,6 +113,10 @@ app.get("/doc", function (req, res, next) {
 
 });
 
+/**
+ * Get nudge HTML form
+ * @returns {void}
+ */
 app.get("/doc/nudge", function (req, res, next) {
   fs.readFile(path.resolve(config.basedir, "./docs/nudge.html")).then(data => {
     res.set('Content-Type', 'text/html');
@@ -101,8 +127,10 @@ app.get("/doc/nudge", function (req, res, next) {
 
 });
 
+// Plug the monitor interfaces
 monitor.stats(app);
 
+// check that our default options are properly setup, or abort
 if (!config.checkOptions("host", "port", "env")) {
   console.error("Improper configuration. Not Starting");
   process.abort();

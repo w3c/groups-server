@@ -6,6 +6,11 @@ import config from "./lib/config.js";
 import fetch from 'node-fetch';
 import { sanitizeW3CJSON } from "./lib/utils.js";
 
+/**
+ * Fetch the list of services for a given group, and expand the version control entry
+ * @param {object} group - a W3C API Group object
+ * @returns {Array} The services
+ */
 async function services(group) {
   const services = [];
   for await (const service of w3c.listServices(group.identifier)) {
@@ -22,7 +27,6 @@ async function services(group) {
 
 /**
  * Get the groups from the W3C API, sort them based on names
- *
  * @returns {Array} the Groups
  */
 async function w3cgroups() {
@@ -49,7 +53,7 @@ async function w3cgroups() {
 /**
  * Should we expose a repository or not?
  *
- * @param {String} repo
+ * @param {String} repo - a GH repository (expanded) object
  * @returns {boolean} true if the repository should kept, false otherwise
  */
 function keepRepository(repo) {
@@ -174,7 +178,7 @@ let settings = {
 };
 
 /**
- * This refreshes the list of groups, repositories and publish everything
+ * This refreshes the list of GH owners, groups, repositories and publish everything
  */
 async function cycle() {
   monitor.log("Starting a cycle");
