@@ -26,8 +26,8 @@
   },
   "homepage": "https://github.com/w3c/groups#readme",
   "dependencies": {
-    "@octokit/core": "3.*.*",
-    "@octokit/plugin-throttling": "3.*.*",
+    "@octokit/core": "6.*.*",
+    "@octokit/plugin-throttling": "9.*.*",
     "body-parser": "1.*.*",
     "express": "4.*.*",
     "nodemailer": "6.*.*"

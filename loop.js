@@ -3,7 +3,6 @@ import w3c from "./lib/w3c.js";
 import * as publish from "./lib/publish.js";
 import * as monitor from "./lib/monitor.js";
 import config from "./lib/config.js";
-import fetch from 'node-fetch';
 import { sanitizeW3CJSON } from "./lib/utils.js";
 
 /**
