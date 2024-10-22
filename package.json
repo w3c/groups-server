@@ -9,7 +9,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "start": "index.js",
+    "start": "node .",
     "test": "none"
   },
   "repository": {
