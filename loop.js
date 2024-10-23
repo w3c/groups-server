@@ -258,7 +258,7 @@ async function cycle() {
       group = other_groups[cid];
       if (group.identifier) {  // filter out group === "invalid"
         return group.identifier;
-      }
+      } // return undefined
     } else {
       group = await w3c.group(cid);
       if (group) {
@@ -269,7 +269,7 @@ async function cycle() {
         return group.identifier;
       } else {
         other_groups[cid] = "invalid";
-      }
+      } // return undefined
     }
     return undefined;
   }

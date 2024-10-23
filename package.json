@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node .",
-    "test": "none"
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
