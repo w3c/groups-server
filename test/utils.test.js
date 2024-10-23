@@ -5,81 +5,84 @@ import * as utils from '../lib/utils.js';
 describe('lib/utils', () => {
 
 describe('arrayOfString', () => {
-    it('should work with array with one string', () => {
+    it('array with one string', () => {
         assert.deepEqual(utils.arrayOfString(["foobar"]), ["foobar"]);
     });
-    it('should work with string', () => {
+    it('string', () => {
         assert.deepEqual(utils.arrayOfString("foobar"), ["foobar"]);
     });
 
-    it('should work with array with a string and null', () => {
+    it('array with a string and null', () => {
       assert.deepEqual(utils.arrayOfString(["foobar", null]), ["foobar"]);
     });
+    it('array with a string and an array with null', () => {
+      assert.deepEqual(utils.arrayOfString(["foobar", [null]]), ["foobar"]);
+    });
 
-    it('should work with empty string', () => {
+    it('empty string', () => {
         assert.equal(utils.arrayOfString(""), undefined);
     });
-    it('should work with null', () => {
+    it('null', () => {
         assert.equal(utils.arrayOfString(null), undefined);
     });
-    it('should work with a number', () => {
+    it('a number', () => {
         assert.equal(utils.arrayOfString(0), undefined);
     });
-    it('should work with a boolean', () => {
+    it('a boolean', () => {
         assert.equal(utils.arrayOfString(true), undefined);
     });
 
-    it('should work with array containing an empty string', () => {
+    it('array containing an empty string', () => {
         assert.equal(utils.arrayOfString([""]), undefined);
     });
-    it('should work with array containing null ', () => {
+    it('array containing null ', () => {
         assert.equal(utils.arrayOfString([null]), undefined);
     });
-    it('should work with array containing a number ', () => {
+    it('array containing a number ', () => {
         assert.equal(utils.arrayOfString([0]), undefined);
     });
-    it('should work with array containing a boolean ', () => {
+    it('array containing a boolean ', () => {
         assert.equal(utils.arrayOfString([true]), undefined);
     });
 });
 
 describe('toBoolean', () => {
-  it('should work with a boolean', () => {
-      assert.deepEqual(utils.toBoolean(true), true);
+  it('a boolean', () => {
+      assert.equal(utils.toBoolean(true), true);
   });
-  it('should work with a boolean', () => {
-    assert.deepEqual(utils.toBoolean(false), false);
+  it('a boolean', () => {
+    assert.equal(utils.toBoolean(false), false);
   });
-  it('should work with a string', () => {
-      assert.deepEqual(utils.toBoolean("true"), true);
+  it('a string', () => {
+      assert.equal(utils.toBoolean("true"), true);
   });
-  it('should work with a string', () => {
-      assert.deepEqual(utils.toBoolean("1"), true);
+  it('a string', () => {
+      assert.equal(utils.toBoolean("1"), true);
   });
-  it('should work with a string', () => {
-    assert.deepEqual(utils.toBoolean("false"), false);
+  it('a string', () => {
+    assert.equal(utils.toBoolean("false"), false);
   });
-  it('should work with a string', () => {
-    assert.deepEqual(utils.toBoolean("0"), false);
+  it('a string', () => {
+    assert.equal(utils.toBoolean("0"), false);
   });
-  it('should work with an invalid string', () => {
-      assert.deepEqual(utils.toBoolean("foobar"), undefined);
+  it('an invalid string', () => {
+      assert.equal(utils.toBoolean("foobar"), undefined);
   });
-  it('should work with a number', () => {
-      assert.deepEqual(utils.toBoolean(1), true);
+  it('a number', () => {
+      assert.equal(utils.toBoolean(1), true);
   });
-  it('should work with a number', () => {
-      assert.deepEqual(utils.toBoolean(0), false);
+  it('a number', () => {
+      assert.equal(utils.toBoolean(0), false);
   });
-  it('should work with a number', () => {
-    assert.deepEqual(utils.toBoolean(10), undefined);
+  it('a number', () => {
+    assert.equal(utils.toBoolean(10), undefined);
   });
 
-  it('should work with an array', () => {
-    assert.deepEqual(utils.toBoolean([10]), undefined);
+  it('an array', () => {
+    assert.equal(utils.toBoolean([10]), undefined);
   });
-  it('should work with a null', () => {
-    assert.deepEqual(utils.toBoolean(null), undefined);
+  it('a null', () => {
+    assert.equal(utils.toBoolean(null), undefined);
   });
 
 });
