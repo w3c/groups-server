@@ -1,9 +1,8 @@
 import github from "./lib/github.js";
-import w3c from "./lib/w3c.js";
+import * as w3c from "./lib/w3c.js";
 import * as publish from "./lib/publish.js";
 import * as monitor from "./lib/monitor.js";
 import config from "./lib/config.js";
-import { sanitizeW3CJSON } from "./lib/utils.js";
 
 /**
  * Fetch the list of services for a given group, and expand the version control entry
@@ -42,7 +41,6 @@ async function w3cgroups() {
   if (!groups) {
     groups = [];
     for await (const group of w3c.listGroups()) {
-      group.identifier = group._links.self.href.replace('https://api.w3.org/groups/','');
       groups.push(group);
     }
   }
@@ -112,7 +110,7 @@ async function repositories() {
   }
   function addRepository(repo) {
     if (repo.w3cjson && repo.w3cjson.text) {
-      repo.w3cjson = sanitizeW3CJSON(repo.w3cjson.text);
+      repo.w3cjson = w3c.safeW3CJSON(repo.w3cjson.text);
       if (!repo.w3cjson) {
         delete repo.w3cjson;
       }
@@ -252,6 +250,8 @@ async function cycle() {
     } else if (typeof cid === "string") {
       const sg = groups.find(g => g.identifier === cid);
       if (sg) return sg.identifier;
+    } else {
+      return undefined;
     }
     // this isn't an open group or a closed group we saw previously
     if (other_groups[cid]) { // did we fetch the group already?
@@ -263,7 +263,6 @@ async function cycle() {
       group = await w3c.group(cid);
       if (group) {
         // this is likely to be a closed group, not return by the W3C API by default :(
-        group.identifier = group._links.self.href.replace('https://api.w3.org/groups/','')
         groups.push(group);
         other_groups[cid] = group;
         identifiers.push({"id":group.id,"identifier":group.identifier});
@@ -284,6 +283,8 @@ async function cycle() {
         const group = await findGroup(cid);
         if (group) {
           newgroup.push(group);
+        } else {
+          monitor.warn(`Can't find group ${cid} from ${repo.owner.login}/${repo.name}`);
         }
       }
       repo.w3cjson.group = newgroup;
