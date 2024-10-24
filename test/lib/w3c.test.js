@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert/strict';
 import { suite, test } from 'node:test';
-import * as w3c from '../lib/w3c.js';
+import * as w3c from '../../lib/w3c.js';
 
 suite('lib/w3c', () => {
 

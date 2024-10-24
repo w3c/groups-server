@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert/strict';
 import { suite, test } from 'node:test';
-import * as utils from '../lib/utils.js';
+import * as utils from '../../lib/utils.js';
 
 suite('lib/utils', () => {
 
