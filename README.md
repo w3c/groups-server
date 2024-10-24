@@ -26,9 +26,7 @@ Run `npm test` to run the local set of test files.
 
 Run `npm run coverage` to get a test coverage report.
 
-The code used the [debug](https://github.com/debug-js/debug)module.
-
-The `DEBUG` environment variable is used to filter debug messages.
+The code uses the [debug](https://github.com/debug-js/debug) module. The `DEBUG` environment variable is used to filter debug messages.
 
 Use `DEBUG=* npm start` to see all debug messages. You may filter debugging modules using `DEBUG=w3c,loop npm start` for example.
 
