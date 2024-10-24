@@ -1,11 +1,11 @@
 import { strict as assert } from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { suite, test } from 'node:test';
 import * as w3c from '../lib/w3c.js';
 
-describe('lib/w3c', () => {
+suite('lib/w3c', () => {
 
 
-describe('safeGroupID', () => {
+suite('safeGroupID', () => {
 
     const GRPS = [
         "tf/i18n-sealreq",
@@ -24,48 +24,51 @@ describe('safeGroupID', () => {
         "tf/wcag2ict",
         "ig/web-networks"
     ]
-    describe('simple group', () => {
+    suite('simple group', () => {
       for (let index = 0; index < GRPS.length; index++) {
-        it(`${GRPS[index]}`, () => {
+        test(`${GRPS[index]}`, () => {
             assert.equal(w3c.safeGroupID(GRPS[index]), GRPS[index]);
         });
       }
     });
-    it('a simple string number', () => {
+    test('a simple string number', () => {
         assert.equal(w3c.safeGroupID("45745"), 45745);
     });
-    it('a simple number', () => {
+    test('a simple number', () => {
         assert.equal(w3c.safeGroupID(45745), 45745);
     });
+    test('a number which is not an integer', () => {
+        assert.equal(w3c.safeGroupID(457.45), undefined);
+    });
 
-    it('a "0"', () => {
+    test('a string "0"', () => {
         assert.equal(w3c.safeGroupID("0"), undefined);
     });
-    it('a 0', () => {
+    test('a number 0', () => {
         assert.equal(w3c.safeGroupID(0), undefined);
     });
-    it('a "100000000000000000"', () => {
+    test('a string "100000000000000000"', () => {
         assert.equal(w3c.safeGroupID("100000000000000000"), undefined);
     });
-    it('a 100000000000000000', () => {
+    test('a number 100000000000000000', () => {
         assert.equal(w3c.safeGroupID(100000000000000000), undefined);
     });
-    it('a boolean', () => {
+    test('a boolean', () => {
         assert.equal(w3c.safeGroupID(true), undefined);
     });
-    it('an array', () => {
+    test('an array', () => {
         assert.equal(w3c.safeGroupID([346456]), undefined);
     });
-    it('null', () => {
+    test('null', () => {
         assert.equal(w3c.safeGroupID(null), undefined);
     });
 });
 
 });
 
-describe('safeW3CJSON', () => {
+suite('safeW3CJSON', () => {
 
-    it('invalid group', () => {
+    test('invalid group', () => {
         const input = `{
   "group": [
     "credentials"
@@ -74,7 +77,7 @@ describe('safeW3CJSON', () => {
         assert.deepEqual(w3c.safeW3CJSON(input), undefined);
     });
 
-    it('contacts', () => {
+    test('contacts', () => {
         const input = `{
   "contacts": [
     "msporny", "dlongley", "OR13"
@@ -86,7 +89,7 @@ describe('safeW3CJSON', () => {
                 ]
               });
     });
-    it('repo-type should be an array', () => {
+    test('repo-type should be an array', () => {
         const input = `{
   "repo-type": "cg-report"
 }`;
@@ -94,7 +97,7 @@ describe('safeW3CJSON', () => {
           "repo-type": [ "cg-report" ]
         });
     });
-    describe('unknown is untouched', () => {
+    suite('unknown is untouched', () => {
         const input = `{
   "unknown": "citizenship-vocab"
 }`;
@@ -102,14 +105,14 @@ describe('safeW3CJSON', () => {
             "unknown": "citizenship-vocab"
         });
     });
-    describe('invalid JSON', () => {
+    suite('invalid JSON', () => {
         const input = `{
   "unknown": "citizenship-vocab"
   ,
 }`;
         assert.deepEqual(w3c.safeW3CJSON(input), undefined);
     });
-    it('simple group', () => {
+    test('simple group', () => {
         const input = `{
   "group": [
     "wg/timed-text"
@@ -131,7 +134,7 @@ describe('safeW3CJSON', () => {
             "repo-type": [ "cg-report", "homepage" ]
         });
     });
-    describe('invalid boolean group', () => {
+    suite('invalid boolean group', () => {
         const input = `{
   "group": true
 }`;

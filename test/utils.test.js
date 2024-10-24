@@ -1,87 +1,87 @@
 import { strict as assert } from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { suite, test } from 'node:test';
 import * as utils from '../lib/utils.js';
 
-describe('lib/utils', () => {
+suite('lib/utils', () => {
 
-describe('arrayOfString', () => {
-    it('array with one string', () => {
+suite('arrayOfString', () => {
+    test('array with one string', () => {
         assert.deepEqual(utils.arrayOfString(["foobar"]), ["foobar"]);
     });
-    it('string', () => {
+    test('string', () => {
         assert.deepEqual(utils.arrayOfString("foobar"), ["foobar"]);
     });
 
-    it('array with a string and null', () => {
+    test('array with a string and null', () => {
       assert.deepEqual(utils.arrayOfString(["foobar", null]), ["foobar"]);
     });
-    it('array with a string and an array with null', () => {
+    test('array with a string and an array with null', () => {
       assert.deepEqual(utils.arrayOfString(["foobar", [null]]), ["foobar"]);
     });
 
-    it('empty string', () => {
+    test('empty string', () => {
         assert.equal(utils.arrayOfString(""), undefined);
     });
-    it('null', () => {
+    test('null', () => {
         assert.equal(utils.arrayOfString(null), undefined);
     });
-    it('a number', () => {
+    test('a number', () => {
         assert.equal(utils.arrayOfString(0), undefined);
     });
-    it('a boolean', () => {
+    test('a boolean', () => {
         assert.equal(utils.arrayOfString(true), undefined);
     });
 
-    it('array containing an empty string', () => {
+    test('array containing an empty string', () => {
         assert.equal(utils.arrayOfString([""]), undefined);
     });
-    it('array containing null ', () => {
+    test('array containing null ', () => {
         assert.equal(utils.arrayOfString([null]), undefined);
     });
-    it('array containing a number ', () => {
+    test('array containing a number ', () => {
         assert.equal(utils.arrayOfString([0]), undefined);
     });
-    it('array containing a boolean ', () => {
+    test('array containing a boolean ', () => {
         assert.equal(utils.arrayOfString([true]), undefined);
     });
 });
 
-describe('toBoolean', () => {
-  it('a boolean', () => {
+suite('toBoolean', () => {
+  test('a boolean', () => {
       assert.equal(utils.toBoolean(true), true);
   });
-  it('a boolean', () => {
+  test('a boolean', () => {
     assert.equal(utils.toBoolean(false), false);
   });
-  it('a string', () => {
+  test('a string', () => {
       assert.equal(utils.toBoolean("true"), true);
   });
-  it('a string', () => {
+  test('a string', () => {
       assert.equal(utils.toBoolean("1"), true);
   });
-  it('a string', () => {
+  test('a string', () => {
     assert.equal(utils.toBoolean("false"), false);
   });
-  it('a string', () => {
+  test('a string', () => {
     assert.equal(utils.toBoolean("0"), false);
   });
-  it('an invalid string', () => {
+  test('an invalid string', () => {
       assert.equal(utils.toBoolean("foobar"), undefined);
   });
-  it('a number', () => {
+  test('a number', () => {
       assert.equal(utils.toBoolean(1), true);
   });
-  it('a number', () => {
+  test('a number', () => {
       assert.equal(utils.toBoolean(0), false);
   });
-  it('a number', () => {
+  test('a number', () => {
     assert.equal(utils.toBoolean(10), undefined);
   });
 
-  it('an array', () => {
+  test('an array', () => {
     assert.equal(utils.toBoolean([10]), undefined);
   });
-  it('a null', () => {
+  test('a null', () => {
     assert.equal(utils.toBoolean(null), undefined);
   });
 
