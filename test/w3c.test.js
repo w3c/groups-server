@@ -97,7 +97,7 @@ suite('safeW3CJSON', () => {
           "repo-type": [ "cg-report" ]
         });
     });
-    suite('unknown is untouched', () => {
+    test('unknown is untouched', () => {
         const input = `{
   "unknown": "citizenship-vocab"
 }`;
@@ -105,11 +105,10 @@ suite('safeW3CJSON', () => {
             "unknown": "citizenship-vocab"
         });
     });
-    suite('invalid JSON', () => {
+    test('invalid JSON', () => {
         const input = `{
-  "unknown": "citizenship-vocab"
-  ,
-}`;
+           "unknown": "citizenship-vocab",
+        }`;
         assert.deepEqual(w3c.safeW3CJSON(input), undefined);
     });
     test('simple group', () => {
@@ -134,7 +133,7 @@ suite('safeW3CJSON', () => {
             "repo-type": [ "cg-report", "homepage" ]
         });
     });
-    suite('invalid boolean group', () => {
+    test('invalid boolean group', () => {
         const input = `{
   "group": true
 }`;
