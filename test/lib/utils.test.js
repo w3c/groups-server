@@ -55,10 +55,10 @@ suite('toBoolean', () => {
 
 });
 
-suite('fetchJSON', async () => {
-  const f1 = await utils.fetchJSON("https://api.w3.org/groups/other/tag");
-  test('group exists', () => {
-      assert.deepEqual(f1.id, 34270);
+suite('fetchJSON', () => {
+  test('group exists', async () => {
+    const f1 = await utils.fetchJSON("https://api.w3.org/groups/other/tag");
+    assert.deepEqual(f1.id, 34270);
   });
   test('group does not exist', () => {
     assert.rejects(utils.fetchJSON("https://api.w3.org/groups/other/unknown"));
@@ -68,4 +68,17 @@ suite('fetchJSON', async () => {
   });
 });
 
+suite('iterateHAL', () => {
+  test('service exists', async () => {
+    let gh = {};
+    for await (const s of utils.iterateHAL("services", "https://api.w3.org/groups/other/tag/services")) {
+      if (s.type === 'repository') {
+        gh = s;
+        break;
+      }
+    }
+    assert.equal(gh.link, 'https://github.com/w3ctag');
+  });
 });
+
+}); // suite lib/utils

@@ -14,7 +14,7 @@ const debug = debuglog('loop');
  */
 async function services(group) {
   const services = [];
-  for await (const service of w3c.listServices(group.identifier)) {
+  for await (const service of w3c.listGroupServices(group.identifier)) {
     services.push(service);
   }
   for (const service of services.filter(s => s.title === "Version Control")) {
@@ -31,7 +31,7 @@ async function services(group) {
  * @returns {Array} the Groups
  */
 async function w3cgroups() {
-  let groups;
+  const groups = [];
   function compare(g1, g2) {
     if (g1.name < g2.name) {
       return -1;
@@ -41,11 +41,9 @@ async function w3cgroups() {
     }
     return 0;
   }
-  if (!groups) {
-    groups = [];
-    for await (const group of w3c.listGroups()) {
-      groups.push(group);
-    }
+
+  for await (const group of w3c.listGroups()) {
+    groups.push(group);
   }
   return groups.sort(compare);
 }
@@ -199,6 +197,9 @@ async function cycle() {
 
   // const groups = [{"identifier": "cg/wicg"}];
   monitor.log(`loaded ${groups.length} groups`);
+  if (groups.length === 0) {
+    throw new Error('Found no W3C Groups. Aborted.');
+  }
 
   // this forces to load the repositories of W3C without making claims of group ownership
   for (const group of groups) {
@@ -392,7 +393,8 @@ function init() {
      }).catch(err => {
       monitor.error("invalid settings.json", err);
     }).then(cycle).catch(err => {
-       monitor.error("refresh loop crashed", err);
+      monitor.error("refresh loop crashed", err);
+      if (config.debug) process.exit(1);
     }).finally(() => {
       debug(`refresh cycle not starting (debug mode)`);
       if (!config.debug)  setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);

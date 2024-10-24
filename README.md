@@ -30,6 +30,8 @@ The code uses the [debug](https://github.com/debug-js/debug) module. The `DEBUG`
 
 Use `DEBUG=* npm start` to see all debug messages. You may filter debugging modules using `DEBUG=w3c,loop npm start` for example.
 
+`DEBUG=w3c node --test --test-name-pattern "lib/w3c group"` will debug the lib/w3c.js module, running only the tests related to that module
+
 ## Production
 
 `export NODE_ENV=production` environment variable will be necessary
