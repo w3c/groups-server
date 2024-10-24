@@ -93,13 +93,25 @@ suite('safeW3CJSON', () => {
         const input = `{ "contacts": [ "user1", "user2" ] }`;
         assert.deepEqual(w3c.safeW3CJSON(input), {"contacts":["user1","user2"]});
     });
-    test('one string contact', () => {
+    test('one contact', () => {
         const input = `{ "contacts": "user1" }`;
         assert.deepEqual(w3c.safeW3CJSON(input), {"contacts":["user1"]});
     });
-    test('repo-type should be an array', () => {
+    test('shortnames', () => {
+        const input = `{ "shortname": [ "short", "old_short" ] }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), {"shortname":["short","old_short"]});
+    });
+    test('one shortname', () => {
+        const input = `{ "shortname": "short" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), {"shortname":["short"]});
+    });
+    test('repo-types', () => {
+        const input = `{ "repo-type": [ "cg-report", "homepage" ] }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), {"repo-type":["cg-report","homepage"]});
+    });
+    test('one repo-type', () => {
         const input = `{ "repo-type": "cg-report" }`;
-        assert.deepEqual(w3c.safeW3CJSON(input), {"repo-type": ["cg-report"]});
+        assert.deepEqual(w3c.safeW3CJSON(input), {"repo-type":["cg-report"]});
     });
 
     test('policy may be open', () => {
