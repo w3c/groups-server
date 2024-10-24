@@ -1,7 +1,7 @@
 {
   "name": "w3cgroups-data",
   "version": "1.0.0",
-  "description": "Group data gatherer",
+  "description": "Group and GitHub data server gatherer",
   "main": "index.js",
   "type": "module",
   "directories": {
@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "node .",
-    "test": "node --test"
+    "test": "node --test",
+    "coverage": "node --test --experimental-test-coverage"
   },
   "repository": {
     "type": "git",
