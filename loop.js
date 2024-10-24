@@ -3,6 +3,9 @@ import * as w3c from "./lib/w3c.js";
 import * as publish from "./lib/publish.js";
 import * as monitor from "./lib/monitor.js";
 import config from "./lib/config.js";
+import debuglog from "debug";
+
+const debug = debuglog('loop');
 
 /**
  * Fetch the list of services for a given group, and expand the version control entry
@@ -145,9 +148,9 @@ async function repositories() {
       }
     }
     for (const owner of owners) {
-      if (config.debug) monitor.log(`loading repositories for owner ${owner}`)
+      debug(`loading repositories for owner ${owner}`)
       for await (const repo of github.listRepos(owner)) {
-        if (config.debug) monitor.log(`found ${repo.owner.login}/${repo.name}`)
+        debug(`found ${repo.owner.login}/${repo.name}`)
         addRepository(repo);
       }
     }
@@ -160,7 +163,7 @@ async function repositories() {
       }
     }
     for (const repo of crepos) {
-      if (config.debug) monitor.log(`loading repository ${repo}`)
+      debug(`loading repository ${repo}`)
       addRepository(await github.getRepo(repo));
     }
 
@@ -284,7 +287,7 @@ async function cycle() {
         if (group) {
           newgroup.push(group);
         } else {
-          monitor.warn(`Can't find group ${cid} from ${repo.owner.login}/${repo.name}`);
+          debug(`Can't find group ${cid} from ${repo.owner.login}/${repo.name}`);
         }
       }
       repo.w3cjson.group = newgroup;
@@ -361,12 +364,6 @@ async function serve(request, response, next) {
 
 export
 function init() {
-  let doCycle = true;
-  if (config.debug) {
-    // abort
-    monitor.warn(`refresh cycle not starting (debug mode)`);
-    doCycle = false;
-  }
   function loop() {
     fetch("https://w3c.github.io/groups/settings.json").then(res => res.json())
      .then(_settings => {
@@ -396,8 +393,9 @@ function init() {
       monitor.error("invalid settings.json", err);
     }).then(cycle).catch(err => {
        monitor.error("refresh loop crashed", err);
-     }).then(() => {
-        if (doCycle)  setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
+    }).finally(() => {
+      debug(`refresh cycle not starting (debug mode)`);
+      if (!config.debug)  setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
      });
   }
   loop();

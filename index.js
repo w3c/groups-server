@@ -50,7 +50,7 @@ app.post("/payload", function (req, res, next) {
     return; // no action
   }
   let ghEvent = req.get("X-GitHub-Event");
-  monitor.log("GitHub event " + ghEvent + " " + req.body.action);
+  debug("GitHub event " + ghEvent + " " + req.body.action);
 
   try {
     // HOOK DEACTIVATED ghHandler.dispatchEvent(ghEvent, req.body);
@@ -130,20 +130,20 @@ app.get("/doc/nudge", function (req, res, next) {
 // Plug the monitor interfaces
 monitor.stats(app);
 
+/* eslint-disable no-console */
 // check that our default options are properly setup, or abort
-if (!config.checkOptions("host", "port", "env")) {
+const missing = config.checkOptions("host", "port", "env");
+if (missing) {
   console.error("Improper configuration. Not Starting");
+  for (const opt of missing) {
+    console.error(`${opt} config option missing`);
+  }
   process.abort();
 }
 
-/* eslint-disable no-console */
 app.listen(config.port, () => {
   console.log(`Express server ${config.host} listening on port ${config.port} in ${config.env} mode`);
   console.log("App started in", (Date.now() - t0) + "ms.");
-  if (!config.debug && config.env != "production") {
-    console.warn("WARNING: 'export NODE_ENV=production' is missing");
-    console.warn("See http://expressjs.com/en/advanced/best-practice-performance.html#set-node_env-to-production");
-  }
   init();
 });
 /* eslint-enable no-console */

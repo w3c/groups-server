@@ -30,7 +30,11 @@
     "@octokit/core": "6.*.*",
     "@octokit/plugin-throttling": "9.*.*",
     "body-parser": "1.*.*",
+    "debug": "4.*.*",
     "express": "4.*.*",
     "nodemailer": "6.*.*"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }
