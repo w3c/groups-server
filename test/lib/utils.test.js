@@ -87,4 +87,17 @@ suite('toBoolean', () => {
 
 });
 
+suite('fetchJSON', async () => {
+  const f1 = await utils.fetchJSON("https://api.w3.org/groups/other/tag");
+  test('other/tag exists', () => {
+      assert.deepEqual(f1.id, 34270);
+  });
+  test('other/unknown does not exist', () => {
+    assert.rejects(utils.fetchJSON("https://api.w3.org/groups/other/unknown"));
+  });
+  test('not JSON', () => {
+    assert.rejects(utils.fetchJSON("https://www.w3.org/"));
+  });
+});
+
 });
