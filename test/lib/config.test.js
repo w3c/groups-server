@@ -14,17 +14,14 @@ suite('lib/config', () => {
   test('refreshCycle', () => assert.equal(Number.isInteger(config.refreshCycle), true));
 
   suite('checkOptions', () => {
-    test('checkOptions port', () => {
-      assert.equal(config.checkOptions("port"), true);
+    test("valid", () => {
+      assert.equal(config.checkOptions("port"), true, 'port');
+      assert.equal(config.checkOptions("port", "env"), true, 'port,env');
     });
-    test('checkOptions port,env', () => {
-      assert.equal(config.checkOptions("port", "env"), true);
-    });
-    test('checkOptions missing', () => {
-      assert.equal(config.checkOptions("missing"), false);
-    });
-    test('checkOptions port,env,missing', () => {
-      assert.equal(config.checkOptions("port", "env", "missing"), false);
+    test('missing', () => {
+      assert.equal(config.checkOptions("missing"), false, 'missing');
+      assert.equal(config.checkOptions("port", "env", "missing"), false,
+        'port,env,missing');
     });
   });
 
