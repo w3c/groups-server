@@ -135,7 +135,7 @@ suite('safeW3CJSON', () => {
         assert.deepEqual(w3c.safeW3CJSON(input), undefined);
     });
 
-    test('unknown is untouched', () => {
+    test('unknown properties are untouched', () => {
         const input = `{ "unknown": "citizenship-vocab" }`;
         assert.deepEqual(w3c.safeW3CJSON(input), {"unknown": "citizenship-vocab"});
     });
