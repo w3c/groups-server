@@ -97,6 +97,10 @@ suite('safeW3CJSON', () => {
         const input = `{ "contacts": "user1" }`;
         assert.deepEqual(w3c.safeW3CJSON(input), {"contacts":["user1"]});
     });
+    test('one null contact', () => {
+        const input = `{ "contacts": null }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), undefined);
+    });
     test('shortnames', () => {
         const input = `{ "shortname": [ "short", "old_short" ] }`;
         assert.deepEqual(w3c.safeW3CJSON(input), {"shortname":["short","old_short"]});
