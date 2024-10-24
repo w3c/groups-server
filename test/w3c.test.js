@@ -68,76 +68,78 @@ suite('safeGroupID', () => {
 
 suite('safeW3CJSON', () => {
 
+    test('group should be an array', () => {
+        const input = `{ "group": "other/tag" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), { "group": ["other/tag"] });
+    });
+    test('group accepts unknown group type', () => {
+        const input = `{ "group": "supreme/tag" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), { "group": ["supreme/tag"] });
+    });
     test('invalid group', () => {
-        const input = `{
-  "group": [
-    "credentials"
-  ]
-}`;
+        const input = `{ "group": [ "credentials" ] }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), undefined);
+    });
+    test('invalid boolean group', () => {
+        const input = `{ "group": true }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), undefined);
+    });
+    test('invalid null group', () => {
+        const input = `{ "group": null }`;
         assert.deepEqual(w3c.safeW3CJSON(input), undefined);
     });
 
     test('contacts', () => {
-        const input = `{
-  "contacts": [
-    "msporny", "dlongley", "OR13"
-  ]
-}`;
-        assert.deepEqual(w3c.safeW3CJSON(input), {
-                "contacts": [
-                  "msporny", "dlongley", "OR13"
-                ]
-              });
+        const input = `{ "contacts": [ "user1", "user2" ] }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), {"contacts":["user1","user2"]});
+    });
+    test('one string contact', () => {
+        const input = `{ "contacts": "user1" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), {"contacts":["user1"]});
     });
     test('repo-type should be an array', () => {
-        const input = `{
-  "repo-type": "cg-report"
-}`;
-        assert.deepEqual(w3c.safeW3CJSON(input), {
-          "repo-type": [ "cg-report" ]
-        });
+        const input = `{ "repo-type": "cg-report" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), {"repo-type": ["cg-report"]});
     });
+
+    test('policy may be open', () => {
+        const input = `{ "policy": "open" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), { "policy": "open" });
+    });
+    test('policy may be restricted', () => {
+        const input = `{ "policy": "restricted" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), { "policy": "restricted" });
+    });
+    test('policy may be unknown', () => {
+        const input = `{ "policy": "unknown" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), undefined);
+    });
+    test('policy may be null', () => {
+        const input = `{ "policy": null }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), undefined);
+    });
+
     test('unknown is untouched', () => {
-        const input = `{
-  "unknown": "citizenship-vocab"
-}`;
-        assert.deepEqual(w3c.safeW3CJSON(input), {
-            "unknown": "citizenship-vocab"
-        });
+        const input = `{ "unknown": "citizenship-vocab" }`;
+        assert.deepEqual(w3c.safeW3CJSON(input), {"unknown": "citizenship-vocab"});
     });
     test('invalid JSON', () => {
-        const input = `{
-           "unknown": "citizenship-vocab",
-        }`;
+        const input = `{ "unknown": "citizenship-vocab", }`;
         assert.deepEqual(w3c.safeW3CJSON(input), undefined);
     });
     test('simple group', () => {
         const input = `{
-  "group": [
-    "wg/timed-text"
-  ],
-  "contacts": [
-    "msporny", "dlongley", "OR13"
-  ],
-  "unknown": "citizenship-vocab",
-  "repo-type": [ "cg-report", "homepage" ]
-}`;
+         "group": [ "wg/timed-text" ],
+         "contacts": [ "user1", "user2" ],
+         "unknown": "citizenship-vocab",
+         "repo-type": [ "cg-report", "homepage" ]
+        }`;
         assert.deepEqual(w3c.safeW3CJSON(input), {
-            "group": [
-                    "wg/timed-text"
-            ],
-            "contacts": [
-                  "msporny", "dlongley", "OR13"
-            ],
+            "group": [ "wg/timed-text" ],
+            "contacts": [ "user1", "user2" ],
             "unknown": "citizenship-vocab",
             "repo-type": [ "cg-report", "homepage" ]
         });
-    });
-    test('invalid boolean group', () => {
-        const input = `{
-  "group": true
-}`;
-        assert.deepEqual(w3c.safeW3CJSON(input), undefined);
     });
 
 });
