@@ -74,6 +74,7 @@ function keepRepository(repo) {
  * @returns {Array} contains a sorted list of repositories
  */
 async function repositories() {
+  debug("load repositories")
   let repos;
   function compare(r1, r2) {
     const c1 = r1.owner.login + '/' + r1.name;
@@ -110,23 +111,13 @@ async function repositories() {
     return groups;
   }
   function addRepository(repo) {
-    if (repo.w3cjson && repo.w3cjson.text) {
-      repo.w3cjson = w3c.safeW3CJSON(repo.w3cjson.text);
-      if (!repo.w3cjson) {
-        delete repo.w3cjson;
-      }
-    } else {
+    if (!repo.w3cjson) {
       const groups = defaultGroups(repo);
       if (groups.length) {
         if (!repo.w3cjson) repo.w3cjson = {};
         repo.w3cjson.group = groups;
+        debug(`Add group ${groups}`);
       }
-    }
-    if (repo.homepageUrl === null) {
-      delete repo.homepageUrl;
-    }
-    if (repo.description === null) {
-      delete repo.description;
     }
     if (keepRepository(repo)) {
       repos.push(repo);
@@ -204,14 +195,12 @@ async function cycle() {
   // this forces to load the repositories of W3C without making claims of group ownership
   for (const group of groups) {
     if (group.services) {
-      const services = group.services.filter(s => s.details
-        && s.details.type === "repository"
-      );
+      const services = group.services.filter(s => s.type === "repository");
       if (services.length > 0) {
         for (const service of services) {
-          const match = service.details.link.match("https://github.com/([^/]+)/?([^/]+)?/?")
+          const match = service.link.match("https://github.com/([^/]+)/?([^/]+)?/?")
           if (!match) {
-            // console.log(`${group.identifier} Ignore ${service.details.link}`);
+            debug(`${group.identifier} Ignore ${service.link}`);
           } else if (match[1] && !match[2]) {
             if (match[1].toLowerCase() != 'w3c') {
               settings.owners.push({
@@ -228,7 +217,7 @@ async function cycle() {
               "group": [ group.identifier ]
             });
           } else { // ignore
-            // console.log(`${group.identifier} Ignore ${service.details.link}`);
+            debug(`${group.identifier} Ignore ${service.link}`);
           } 
         }
       }
