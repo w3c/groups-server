@@ -1,4 +1,5 @@
 import github from "./lib/github.js";
+import { fetchJSON } from "./lib/utils.js";
 import * as w3c from "./lib/w3c.js";
 import * as publish from "./lib/publish.js";
 import * as monitor from "./lib/monitor.js";
@@ -18,7 +19,7 @@ async function services(group) {
     services.push(service);
   }
   for (const service of services.filter(s => s.title === "Version Control")) {
-    const s = await fetch(service.href).then(r => r.json()).catch(err => undefined);
+    const s = await fetchJSON(service.href);
     if (s) {
       service.details = s;
     }
@@ -180,7 +181,6 @@ async function cycle() {
   }
   if (!groups) {
     groups = await w3cgroups();
-    
     for (const group of groups) {
       group.services = await services(group);
     }
@@ -195,10 +195,11 @@ async function cycle() {
   // this forces to load the repositories of W3C without making claims of group ownership
   for (const group of groups) {
     if (group.services) {
-      const services = group.services.filter(s => s.type === "repository");
+      const services = group.services.filter(
+        s => s.details && s.details.type === "repository");
       if (services.length > 0) {
         for (const service of services) {
-          const match = service.link.match("https://github.com/([^/]+)/?([^/]+)?/?")
+          const match = service.details.link.match("https://github.com/([^/]+)/?([^/]+)?/?")
           if (!match) {
             debug(`${group.identifier} Ignore ${service.link}`);
           } else if (match[1] && !match[2]) {
@@ -383,10 +384,13 @@ function init() {
       monitor.error("invalid settings.json", err);
     }).then(cycle).catch(err => {
       monitor.error("refresh loop crashed", err);
-      if (config.debug) process.exit(1);
-    }).finally(() => {
+    }).then(() => {
       debug(`refresh cycle not starting (debug mode)`);
-      if (!config.debug)  setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
+      if (config.debug) {
+        process.exit(1);
+      } else {
+        setTimeout(loop, 1000 * 60 * 60 * settings.refreshCycle);
+      }
      });
   }
   loop();

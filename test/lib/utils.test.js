@@ -21,12 +21,12 @@ suite('iterateHAL', () => {
   test('service exists', async () => {
     let gh = {};
     for await (const s of utils.iterateHAL("services", "https://api.w3.org/groups/other/tag/services")) {
-      if (s.type === 'repository') {
+      if (s.title === 'Version Control') {
         gh = s;
         break;
       }
     }
-    assert.equal(gh.link, 'https://github.com/w3ctag');
+    assert.equal(gh.href, 'https://api.w3.org/services/43860');
   });
 });
 
