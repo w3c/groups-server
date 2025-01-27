@@ -281,7 +281,7 @@ async function cycle() {
           debug(`Can't find group ${cid} from ${repo.owner.login}/${repo.name}`);
         }
       }
-      repo.w3cjson.group = newgroup;
+      repo.w3cjson.group = [...new Set(newgroup)];
       if (repo.w3cjson.group.length > 0) {
         group_repos.push(repo);
       }

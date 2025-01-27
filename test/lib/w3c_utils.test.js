@@ -123,6 +123,9 @@ suite('w3cJSON', () => {
       let input = `{ "group": "other/tag" }`;
       assert.deepEqual(wutils.w3cJSON(input), { "group": ["other/tag"] },
         'group should be an array');
+      input = `{ "group": [ "other/tag", "other/tag" ] }`;
+      assert.deepEqual(wutils.w3cJSON(input), { "group": ["other/tag"] },
+        'group should be unique');
       input = `{ "group": "supreme/tag" }`;
       assert.deepEqual(wutils.w3cJSON(input), { "group": ["supreme/tag"] },
         'group accepts unknown group type');
@@ -131,6 +134,9 @@ suite('w3cJSON', () => {
   test('contacts', () => {
       let input = `{ "contacts": [ "user1", "user2" ] }`;
       assert.deepEqual(wutils.w3cJSON(input), JSON.parse(input));
+      input = `{ "contacts": [ "user1", "user1" ] }`;
+      assert.deepEqual(wutils.w3cJSON(input), { "contacts": [ "user1" ] },
+        "contacts should be unique");
       input = `{ "contacts": "user1" }`;
       assert.deepEqual(wutils.w3cJSON(input), {"contacts":["user1"]},
         'one contact');
@@ -138,6 +144,9 @@ suite('w3cJSON', () => {
   test('shortname', () => {
       let input = `{ "shortname": [ "short", "old_short" ] }`;
       assert.deepEqual(wutils.w3cJSON(input), JSON.parse(input));
+      input = `{ "shortname": [ "short", "short" ] }`;
+      assert.deepEqual(wutils.w3cJSON(input), { "shortname": [ "short" ] },
+        'shortname should be unique');
       input = `{ "shortname": "short" }`;
       assert.deepEqual(wutils.w3cJSON(input), {"shortname":["short"]},
         'one shortname');
@@ -145,6 +154,9 @@ suite('w3cJSON', () => {
   test('repo-type', () => {
       let input = `{ "repo-type": [ "cg-report", "homepage" ] }`;
       assert.deepEqual(wutils.w3cJSON(input), JSON.parse(input));
+      input = `{ "repo-type": [ "homepage", "homepage" ] }`;
+      assert.deepEqual(wutils.w3cJSON(input), { "repo-type": [ "homepage" ] },
+        'repo-type should be unique');
       input = `{ "repo-type": "cg-report" }`;
       assert.deepEqual(wutils.w3cJSON(input), {"repo-type":["cg-report"]},
         'one repo-type');
