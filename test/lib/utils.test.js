@@ -21,7 +21,7 @@ suite('iterateHAL', () => {
   test('service exists', async () => {
     let gh = {};
     for await (const s of utils.iterateHAL("services", "https://api.w3.org/groups/other/tag/services")) {
-      if (s.title === 'Version Control') {
+      if (s.title.indexOf('Version Control') != -1) {
         gh = s;
         break;
       }

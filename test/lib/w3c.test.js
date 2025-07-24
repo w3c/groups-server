@@ -121,7 +121,7 @@ suite('listGroupServices', () => {
   test('a service exists', async () => {
     let gh;
     for await (const s of (w3c.listGroupServices("other/tag"))) {
-      if (s.title === 'Version Control') {
+      if (s.title.indexOf('Version Control') != -1) {
         gh = s;
         break;
       }
