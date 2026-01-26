@@ -58,7 +58,8 @@ suite('getRepo', () => {
        "repo-type": [
         "rec-track"
        ],
-       "policy": "open"
+       "policy": "open",
+       "exposed": true
       }
   });
 
@@ -76,6 +77,7 @@ suite('getRepo', () => {
       , "contacts":   ["plehegar", "fantasai", "frivoal"]
       , "policy": "restricted"
       , "repo-type": [ "process" ]
+      , "exposed": true
     }
   });
   
