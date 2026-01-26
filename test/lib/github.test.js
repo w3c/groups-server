@@ -3,7 +3,7 @@ import { suite, test } from 'node:test';
 import gh from '../../lib/github.js';
 
 suite('lib/github', () => {
-
+  
   const testrepo = {
     owner: "w3c-fedid",
     name: "FedCM"
@@ -20,71 +20,71 @@ suite('lib/github', () => {
     }
     return repos;
   }
-
-suite('listRepos', () => {
-  test(`${testrepo.owner}/${testrepo.name} is a listed repository`, async () => {
-    const repos = await testrepos();
-    assert.deepEqual(repos.listRepos.w3cjson["repo-type"], ["rec-track"]);
-  });  
-});
-
-suite('getRepo', () => {
-
-  // shortcut to check object properties, without deepEqual
-  function check(repoName, props) {
-    test(`properties for ${repoName}`, async () => {
-      const repo = await gh.getRepo(repoName);
-      for (const [prop, value] of Object.entries(props))
-        assert.deepEqual(repo[prop], value, prop);
+  
+  suite('listRepos', () => {
+    test(`${testrepo.owner}/${testrepo.name} is a listed repository`, async () => {
+      const repos = await testrepos();
+      assert.deepEqual(repos.listRepos.w3cjson["repo-type"], ["rec-track"]);
     });
-  }
-
-  check('w3c/csswg-drafts', {
+  });
+  
+  suite('getRepo', () => {
+    
+    // shortcut to check object properties, without deepEqual
+    function check(repoName, props) {
+      test(`properties for ${repoName}`, async () => {
+        const repo = await gh.getRepo(repoName);
+        for (const [prop, value] of Object.entries(props))
+          assert.deepEqual(repo[prop], value, prop);
+      });
+    }
+    
+    check('w3c/csswg-drafts', {
       "name": "csswg-drafts",
       "owner": {
-       "login": "w3c"
+        "login": "w3c"
       },
       "homepageUrl": "https://drafts.csswg.org/",
       "description": "CSS Working Group Editor Drafts",
       "isArchived": false,
       "isPrivate": false,
       "w3cjson": {
-       "group": [
-        "wg/css"
-       ],
-       "contacts": [
-        "svgeesus"
-       ],
-       "repo-type": [
-        "rec-track"
-       ],
-       "policy": "open",
-       "exposed": true
+        "group": [
+          "wg/css"
+        ],
+        "contacts": [
+          "svgeesus"
+        ],
+        "repo-type": [
+          "rec-track"
+        ],
+        "policy": "open",
+        "exposed": true
       }
-  });
-
-  check('w3c/process', {
-    "name": "process",
-    "owner": {
-     "login": "w3c"
-    },
-    "homepageUrl": "https://www.w3.org/policies/process/drafts/",
-    "description": "W3C Process Document",
-    "isArchived": false,
-    "isPrivate": false,
-    "w3cjson": {
-      "group": [ "other/ab", "cg/w3process" ]
-      , "contacts":   ["plehegar", "fantasai", "frivoal"]
-      , "policy": "restricted"
-      , "repo-type": [ "process" ]
-      , "exposed": true
-    }
+    });
+    
+    check('w3c/process', {
+      "name": "process",
+      "owner": {
+        "login": "w3c"
+      },
+      "homepageUrl": "https://www.w3.org/policies/process/drafts/",
+      "description": "W3C Process Document",
+      "isArchived": false,
+      "isPrivate": false,
+      "w3cjson": {
+        "group": [ "other/ab", "cg/w3process" ]
+        , "contacts":   ["plehegar", "fantasai", "frivoal"]
+        , "policy": "restricted"
+        , "repo-type": [ "process" ]
+        , "exposed": true
+      }
+    });
+    
+    test("listRepos and getRepo are consistent", async () => {
+      const repos = await testrepos();
+      assert.deepEqual(repos.getRepo, repos.listRepos);
+    });
   });
   
-  test("listRepos and getRepo are consistent", async () => {
-    const repos = await testrepos();
-    assert.deepEqual(repos.getRepo, repos.listRepos);
-  });
-});
-
 }); // suite lib/github

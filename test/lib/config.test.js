@@ -3,7 +3,7 @@ import { suite, test } from 'node:test';
 import config from '../../lib/config.js';
 
 suite('lib/config', () => {
-
+  
   test('env', () => assert.equal(config.env, "dev"));
   test('port', () => assert.equal(config.port, 8080));
   test('host', () => assert.equal(typeof config.host, "string"));
@@ -13,7 +13,7 @@ suite('lib/config', () => {
   test('ghToken', () => assert.equal(typeof config.ghToken, "string"));
   test('destination', () => assert.equal(typeof config.destination, "string"));
   test('refreshCycle', () => assert.equal(Number.isInteger(config.refreshCycle), true));
-
+  
   suite('checkOptions', () => {
     test("valid", () => {
       let s = config.checkOptions("port");
@@ -28,5 +28,5 @@ suite('lib/config', () => {
       assert.equal(s.has('missing'), true, 'port,env,missing');
     });
   });
-
+  
 });
