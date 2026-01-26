@@ -171,6 +171,25 @@ suite('w3cJSON', () => {
         'policy may be restricted');
   });
 
+  test('exposed', () => {
+      let input = `{ "exposed": true }`;
+      assert.deepEqual(wutils.w3cJSON(input), JSON.parse(input),
+        'exposed may be true');
+      assert.deepEqual(wutils.w3cJSON(`{ "exposed": "1" }`), JSON.parse(input),
+        'exposed may be true, with string "1"');
+      assert.deepEqual(wutils.w3cJSON(`{ "exposed": "true" }`), JSON.parse(input),
+        'exposed may be true, with string "true"');
+      input = `{ "exposed": false }`;
+      assert.deepEqual(wutils.w3cJSON(input), JSON.parse(input),
+        'exposed may be false');
+      assert.deepEqual(wutils.w3cJSON(`{ "exposed": "0" }`), JSON.parse(input),
+        'exposed may be false, with string "0"');
+      assert.deepEqual(wutils.w3cJSON(`{ "exposed": "false" }`), JSON.parse(input),
+        'exposed may be false, with string "false"');
+      assert.deepEqual(wutils.w3cJSON(`{ "policy": "open", "exposed": "echo" }`), JSON.parse(`{ "policy": "open" }`),
+        'exposed is ignored if not a boolean-like value');
+  });
+
   test('unknown properties are untouched', () => {
       const input = `{ "unknown": "citizenship-vocab" }`;
       assert.deepEqual(wutils.w3cJSON(input), JSON.parse(input));
