@@ -3,7 +3,7 @@ import { suite, test } from 'node:test';
 import gh from '../../lib/github.js';
 
 suite('lib/github', () => {
-  
+
   const testrepo = {
     owner: "w3c-fedid",
     name: "FedCM"
@@ -20,16 +20,16 @@ suite('lib/github', () => {
     }
     return repos;
   }
-  
+
   suite('listRepos', () => {
     test(`${testrepo.owner}/${testrepo.name} is a listed repository`, async () => {
       const repos = await testrepos();
       assert.deepEqual(repos.listRepos.w3cjson["repo-type"], ["rec-track"]);
     });
   });
-  
+
   suite('getRepo', () => {
-    
+
     // shortcut to check object properties, without deepEqual
     function check(repoName, props) {
       test(`properties for ${repoName}`, async () => {
@@ -38,7 +38,7 @@ suite('lib/github', () => {
           assert.deepEqual(repo[prop], value, prop);
       });
     }
-    
+
     check('w3c/csswg-drafts', {
       "name": "csswg-drafts",
       "owner": {
@@ -62,7 +62,7 @@ suite('lib/github', () => {
         "exposed": true
       }
     });
-    
+
     check('w3c/process', {
       "name": "process",
       "owner": {
@@ -80,11 +80,23 @@ suite('lib/github', () => {
         , "exposed": true
       }
     });
-    
+
     test("listRepos and getRepo are consistent", async () => {
       const repos = await testrepos();
       assert.deepEqual(repos.getRepo, repos.listRepos);
     });
+
+    test("isArchived and exposed properties for webauthn-pay", async () => {
+      const repo = await gh.getRepo(`w3c/webauthn-pay`);
+      assert.deepEqual(repo.isArchived, false, 'isArchived');
+      assert.deepEqual(repo.w3cjson.exposed, false, 'exposed');
+    });
+
+    test("isPrivate and exposed properties for AB-private", async () => {
+      const repo = await gh.getRepo(`w3c/AB-private`);
+      assert.deepEqual(repo.isPrivate, true, 'isPrivate');
+      assert.deepEqual(repo.w3cjson.exposed, true, 'exposed');
+    });
   });
-  
+
 }); // suite lib/github
