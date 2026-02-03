@@ -4,19 +4,6 @@ import * as utils from '../../lib/utils.js';
 
 suite('lib/utils', () => {
   
-  suite('fetchJSON', () => {
-    test('group exists', async () => {
-      const f1 = await utils.fetchJSON("https://api.w3.org/groups/other/tag");
-      assert.deepEqual(f1.id, 34270);
-    });
-    test('group does not exist', () => {
-      assert.rejects(utils.fetchJSON("https://api.w3.org/groups/other/unknown"));
-    });
-    test('not even JSON', () => {
-      assert.rejects(utils.fetchJSON("https://www.w3.org/"));
-    });
-  });
-  
   suite('iterateHAL', () => {
     test('service exists', async () => {
       let gh = {};

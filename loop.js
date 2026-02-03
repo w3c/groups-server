@@ -1,5 +1,5 @@
 import github from "./lib/github.js";
-import { fetchJSON } from "./lib/utils.js";
+import { json } from "./lib/fetch.js";
 import * as w3c from "./lib/w3c.js";
 import * as publish from "./lib/publish.js";
 import * as monitor from "./lib/monitor.js";
@@ -19,7 +19,7 @@ async function services(group) {
     services.push(service);
   }
   for (const service of services.filter(s => s.title.startsWith("Version Control"))) {
-    const s = await fetch(service.href);
+    const s = await json(service.href);
 
     if (s) {
       service.details = s;
@@ -358,7 +358,7 @@ async function serve(request, response, next) {
 export
 function init() {
   function loop() {
-    fetch("https://w3c.github.io/groups/settings.json").then(res => res.json())
+    json("https://w3c.github.io/groups/settings.json")
      .then(_settings => {
       // we make sure we're loading a clean set of settings
       if (_settings.refreshCycle >= 1 && _settings.refreshCycle <= 24) {
