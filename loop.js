@@ -117,6 +117,7 @@ async function repositories() {
       if (groups.length) {
         if (!repo.w3cjson) repo.w3cjson = {};
         repo.w3cjson.group = groups;
+        github.setDefaultExposed(repo); // make sure exposed is set correctly
         debug(`Add group ${groups}`);
       }
     }
