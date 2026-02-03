@@ -18,9 +18,8 @@ async function services(group) {
   for await (const service of w3c.listGroupServices(group.identifier)) {
     services.push(service);
   }
-  for (const service of services.filter(s => s.title.startsWith("Version Control"))) {
+  for (const service of services) {
     const s = await json(service.href);
-
     if (s) {
       service.details = s;
     }
