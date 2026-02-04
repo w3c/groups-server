@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 "use strict";
 
 // Measure the time spent to load the service
