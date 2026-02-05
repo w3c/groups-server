@@ -43,6 +43,10 @@ async function w3cgroups() {
     return 0;
   }
 
+  if (config.debug) {
+    return publish.getData("w3c-groups.json");
+  }
+
   for await (const group of w3c.listGroups()) {
     groups.push(group);
   }
@@ -177,9 +181,8 @@ async function cycle() {
   let groups;
   // const groups = [{"identifier": "cg/wicg"}];
 
-  if (config.debug) {
-    groups = await publish.getData("w3c-groups.json");  
-  }
+  groups = await publish.getData("w3c-groups.json");
+
   if (!groups) {
     groups = await w3cgroups();
     for (const group of groups) {
@@ -232,6 +235,7 @@ async function cycle() {
   monitor.log(`loaded ${allrepos.length} repositories`)
 
   publish.saveData("all-repositories.json", allrepos);
+
   const identifiers = groups.map(g => { return {"id":g.id,"identifier":g.identifier};});
 
   const group_repos = [];
