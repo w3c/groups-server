@@ -44,7 +44,7 @@ suite('lib/github', () => {
       "owner": {
         "login": "w3c"
       },
-      "html_url": "https://github.com/w3c/csswg-drafts",
+      "url": "https://github.com/w3c/csswg-drafts",
       "homepageUrl": "https://drafts.csswg.org/index.html",
       "description": "CSS Working Group Editor Drafts",
       "isArchived": false,
@@ -69,7 +69,7 @@ suite('lib/github', () => {
       "owner": {
         "login": "w3c"
       },
-      "html_url": "https://github.com/w3c/process",
+      "url": "https://github.com/w3c/process",
       "homepageUrl": "https://www.w3.org/policies/process/drafts/",
       "description": "W3C Process Document",
       "isArchived": false,
