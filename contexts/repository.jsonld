@@ -8,6 +8,7 @@
 
     "@language": "en",
 
+    "html_url": "@id",
     "name": {
       "@id": "s:identifier",
       "@language": null
@@ -22,8 +23,7 @@
     "owner": {
       "@id": "s:owner",
       "@context": {
-        "@base": "https://github.com/",
-        "login": "@id",
+        "login": "s:identifier",
         "description": "s:description"
       }
     },
