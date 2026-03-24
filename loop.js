@@ -208,6 +208,9 @@ async function cycle() {
             debug(`${group.identifier} Ignore ${service.link}`);
           } else if (match[1] && !match[2]) {
             if (match[1].toLowerCase() != 'w3c') {
+              if (group.identifier.startsWith("wg/")) {
+                settings.trustedOwners.push(match[1]);
+              }
               settings.owners.push({
                 "login": match[1],
                 "group": [ group.identifier ]
@@ -281,7 +284,11 @@ async function cycle() {
         const cid = repo.w3cjson.group[index];
         const group = await findGroup(cid);
         if (group) {
-          newgroup.push(group);
+          if (group.startsWith("wg/") && !settings.trustedOwners.includes(repo.owner.login.toLowerCase())) {
+            monitor.warn(`Repository ${repo.owner.login}/${repo.name} is claiming group ${group} but isn't a trusted owner. Ignore the claim.`);
+          } else {
+            newgroup.push(group);
+          }
         } else {
           debug(`Can't find group ${cid} from ${repo.owner.login}/${repo.name}`);
         }
@@ -380,10 +387,19 @@ function init() {
                 }
               }
             }
-            new_owners.push({login, group})
+            new_owners.push({login, group});
           }
         }
         settings.owners = new_owners;
+        const new_trusted_owners = [];
+        if (Array.isArray(_settings.trustedOwners)) {
+          for (const obj of _settings.trustedOwners) {
+            if (typeof obj === "string") {
+              new_trusted_owners.push(obj);
+            }
+          }
+        }
+        settings.trustedOwners = new_trusted_owners;
       }
      }).catch(err => {
       monitor.error("invalid settings.json", err);
