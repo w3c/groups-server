@@ -22,6 +22,7 @@ suite('lib/w3c', () => {
       assert.deepEqual(f1, f2);
     });
     check("other/tag", {
+      "@context": "/contexts/group.jsonld",
       id: 34270,
       name: "Technical Architecture Group",
       is_closed: false,
@@ -31,6 +32,7 @@ suite('lib/w3c', () => {
       identifier: "other/tag"
     });
     check("other/ac", {
+      "@context": "/contexts/group.jsonld",
       is_closed: false,
       "group-type": "other",
       shortname: "ac",
@@ -38,6 +40,7 @@ suite('lib/w3c', () => {
       identifier: "other/ac"
     });
     check("wg/webperf", {
+      "@context": "/contexts/group.jsonld",
       is_closed: false,
       "group-type": "wg",
       shortname: "webperf",
@@ -45,6 +48,7 @@ suite('lib/w3c', () => {
       identifier: "wg/webperf"
     });
     check(157284, {
+      "@context": "/contexts/group.jsonld",
       id: 157284,
       name: "Document Object Model Interest Group",
       is_closed: true,
@@ -54,6 +58,7 @@ suite('lib/w3c', () => {
       identifier: "ig/dom"
     });
     check(80485, {
+      "@context": "/contexts/group.jsonld",
       id: 80485,
       name: "Web Platform Incubator Community Group",
       is_closed: false,
@@ -63,6 +68,7 @@ suite('lib/w3c', () => {
       identifier: "cg/wicg"
     });
     check(144308, {
+      "@context": "/contexts/group.jsonld",
       id: 144308,
       name: "Privacy Principles Task Force",
       is_closed: false,
@@ -72,6 +78,7 @@ suite('lib/w3c', () => {
       identifier: "tf/tag-privacy"
     });
     check(54505, {
+      "@context": "/contexts/group.jsonld",
       id: 54505,
       is_closed: true,
       "group-type": "bg",
@@ -85,6 +92,7 @@ suite('lib/w3c', () => {
     });
     // old coordination groups are still exposed
     check(35676, {
+      "@context": "/contexts/group.jsonld",
       id: 35676,
       is_closed: true,
       "group-type": "coord",
@@ -93,6 +101,7 @@ suite('lib/w3c', () => {
       identifier: "coord/xml"
     });
     check(44811, {
+      "@context": "/contexts/group.jsonld",
       id: 44811,
       is_closed: true,
       "group-type": "xg",
