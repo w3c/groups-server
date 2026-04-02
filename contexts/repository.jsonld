@@ -23,12 +23,14 @@
     "owner": {
       "@id": "s:owner",
       "@context": {
-        "login": "s:identifier",
-        "description": "s:description"
+        "login": {
+          "@id": "w3c:githubId",
+          "@language": null
+        }
       }
     },
     "w3cjson": {
-      "@id": "w3cjson",
+      "@id": "w3c:w3cjson",
       "@type": "@json"
     }
   }

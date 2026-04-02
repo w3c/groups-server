@@ -20,7 +20,7 @@
       "@id": "s:endDate",
       "@type": "xsd:date"
     },
-    "close-date": {
+    "closed_date": {
       "@id": "s:dateDeleted",
       "@type": "xsd:date"
     },
@@ -59,7 +59,9 @@
       "@id": "w3c:shortname",
       "@language": null
     },
+    "spec-publisher": "w3c:specPublisher",
     "tr-publisher": "w3c:trPublisher",
+    "type": null,
     "_links": {
       "@id": "@nest",
       "@context": {
