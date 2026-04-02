@@ -40,7 +40,7 @@ suite('lib/github', () => {
     }
 
     check('w3c/csswg-drafts', {
-      "@context": "/contexts/repository.jsonld",
+      "@context": "/groups/contexts/repository.jsonld",
       "name": "csswg-drafts",
       "owner": {
         "login": "w3c"
@@ -66,7 +66,7 @@ suite('lib/github', () => {
     });
 
     check('w3c/process', {
-      "@context": "/contexts/repository.jsonld",
+      "@context": "/groups/contexts/repository.jsonld",
       "name": "process",
       "owner": {
         "login": "w3c"
