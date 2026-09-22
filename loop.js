@@ -181,7 +181,9 @@ async function cycle() {
   let groups;
   // const groups = [{"identifier": "cg/wicg"}];
 
-  groups = await publish.getData("w3c-groups.json");
+  if (config.debug) {
+    groups = await publish.getData("w3c-groups.json");
+  }
 
   if (!groups) {
     groups = await w3cgroups();
