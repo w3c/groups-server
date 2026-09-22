@@ -27,12 +27,12 @@
   },
   "homepage": "https://github.com/w3c/groups#readme",
   "dependencies": {
-    "@octokit/core": "6.*.*",
-    "@octokit/plugin-throttling": "9.*.*",
-    "body-parser": "1.*.*",
+    "@octokit/core": "7.*.*",
+    "@octokit/plugin-throttling": "11.*.*",
+    "body-parser": "2.*.*",
     "debug": "4.*.*",
-    "express": "4.*.*",
-    "nodemailer": "6.*.*"
+    "express": "5.*.*",
+    "nodemailer": "10.*.*"
   },
   "engines": {
     "node": ">=22.0.0"
