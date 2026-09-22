@@ -47,7 +47,7 @@ async function w3cgroups() {
     return publish.getData("w3c-groups.json");
   }
 
-  for await (const group of w3c.listGroups()) {
+  for await (const group of w3c.listAllGroups()) {
     groups.push(group);
   }
   return groups.sort(compare);

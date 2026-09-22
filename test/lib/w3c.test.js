@@ -118,11 +118,12 @@ suite('lib/w3c', () => {
   suite('listGroups', () => {
     test('a group exists', async () => {
       let grp = {};
-      for await (const s of (w3c.listGroups())) {
+      for await (const s of (w3c.listAllGroups())) {
         grp = s;
         break;
       }
-      assert.equal(grp.is_closed, false);
+      assert.equal(grp.id, 42538);
+      assert.equal(grp.is_closed, true);
     });
   });
   
