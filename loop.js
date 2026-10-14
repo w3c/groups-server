@@ -406,6 +406,7 @@ function init() {
      }).catch(err => {
       monitor.error("invalid settings.json", err);
     }).then(cycle).catch(err => {
+      console.error(err);
       monitor.error("refresh loop crashed", err);
     }).then(() => {
       debug(`refresh cycle not starting (debug mode)`);
